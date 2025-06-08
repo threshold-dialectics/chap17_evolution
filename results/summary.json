@@ -1,0 +1,424 @@
+objective: >
+  Explore how chronic resource regimes influence the evolution of agent networks.  Different inflow patterns are expected to produce distinct topologies.
+replications: 3
+random_seeds: [42, 43, 44]
+method_notes: >
+  `simple_box_dim_2d` estimates a 2D box-counting dimension by counting occupied  grid boxes across logarithmically spaced sizes and fitting a line to the  resulting log-log curve.
+definitions:
+  avg_fcrit: "average critical resource threshold per agent (resource units)"
+  n_alive: "number of living agents"
+  avg_degree: "mean node degree among living agents"
+  density: "graph edge density (0-1)"
+  avg_clustering: "average clustering coefficient"
+  overall_avg_path_length: "average shortest path length across the living graph; NaN if disconnected"
+  n_components: "number of connected components"
+  largest_comp_size: "size of the largest component"
+  avg_preferred_degree: "mean preferred degree across agents"
+  avg_beta_lever: "mean beta_lever value (unitless)"
+  lcc_avg_degree: "average degree within the largest component"
+  lcc_avg_path_length: "average path length within the largest component; NaN if <2 nodes"
+  simple_box_dim_2d: "2D box-counting dimension estimate of the largest component"
+units:
+  inflow: "resource units per step"
+  fcrit: "resource units"
+notes: >
+  'overall_avg_path_length' is recorded as NaN when the graph is disconnected.
+{
+  "parameters": {
+    "grid_size": 15,
+    "n_agents": 225,
+    "simulation_steps": 2000,
+    "report_interval": 200
+  },
+  "replications": 30,
+  "random_seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71
+  ],
+  "regimes": {
+    "scarcity": {
+      "final_iteration": {
+        "avg_fcrit": {
+          "mean": 3.36815555555554,
+          "std": 0.15814866319633042
+        },
+        "n_alive": {
+          "mean": 225.0,
+          "std": 0.0
+        },
+        "avg_degree": {
+          "mean": 1.9949629629629633,
+          "std": 0.11802898902243068
+        },
+        "density": {
+          "mean": 0.008906084656084655,
+          "std": 0.0005269151295644228
+        },
+        "avg_clustering": {
+          "mean": 0.07655802469135803,
+          "std": 0.026896500936197096
+        },
+        "overall_avg_path_length": {
+          "mean": NaN,
+          "std": NaN
+        },
+        "n_components": {
+          "mean": 29.166666666666668,
+          "std": 7.711823534172849
+        },
+        "largest_comp_size": {
+          "mean": 118.96666666666667,
+          "std": 43.39007823096069
+        },
+        "avg_preferred_degree": {
+          "mean": 1.4954074074074077,
+          "std": 0.035476455222745513
+        },
+        "avg_beta_lever": {
+          "mean": 0.9983456344144916,
+          "std": 0.006818583626098423
+        },
+        "lcc_avg_degree": {
+          "mean": 2.2959736288215904,
+          "std": 0.10818746027956078
+        },
+        "lcc_avg_path_length": {
+          "mean": 11.685679179211323,
+          "std": 2.7412233270082518
+        },
+        "simple_box_dim_2d": {
+          "mean": 1.6474024413295727,
+          "std": 0.15441715195490904
+        }
+      },
+      "time_series": {
+        "avg_fcrit": {
+          "start": 10.1,
+          "final": 3.3681555555555405,
+          "min": 2.7390962962963457,
+          "max": 10.186192592592597,
+          "slope_per_step": -0.0033676060252348467,
+          "final_std": 0.15814866319633042
+        },
+        "avg_degree": {
+          "start": 0.8589629629629629,
+          "final": 1.994962962962963,
+          "min": 0.8589629629629629,
+          "max": 3.101037037037038,
+          "slope_per_step": 0.0005682841420710356,
+          "final_std": 0.11802898902243068
+        },
+        "avg_clustering": {
+          "start": 0.002246913580246914,
+          "final": 0.07655802469135803,
+          "min": 0.002246913580246914,
+          "max": 0.19099858906525571,
+          "slope_per_step": 3.7174142626868995e-05,
+          "final_std": 0.0268965009361971
+        },
+        "lcc_avg_path_length": {
+          "start": 2.488095238095238,
+          "final": 11.685679179211323,
+          "min": 2.488095238095238,
+          "max": 14.102536258313167,
+          "slope_per_step": 0.004601092516816451,
+          "final_std": 2.7412233270082518
+        },
+        "simple_box_dim_2d": {
+          "start": 0.8371043125113559,
+          "final": 1.6474024413295727,
+          "min": 0.8371043125113559,
+          "max": 1.9179382670509837,
+          "slope_per_step": 0.00040535174027924803,
+          "final_std": 0.15441715195490904
+        }
+      },
+      "final_distributions": {
+        "degree": {
+          "mean": 1.994962962962963,
+          "var": 1.2571598134430726,
+          "min": 0,
+          "max": 7
+        },
+        "comp_size": {
+          "n_components": 875,
+          "largest_comp_size": 188,
+          "mean": 7.714285714285714,
+          "var": 564.7869387755103,
+          "p_in_lcc": 0.5287407407407407
+        }
+      },
+      "resource_schedule": {
+        "type": "constant",
+        "inflow_per_step": 67.5
+      }
+    },
+    "shock": {
+      "final_iteration": {
+        "avg_fcrit": {
+          "mean": 679.7586222222033,
+          "std": 1.448563218795314
+        },
+        "n_alive": {
+          "mean": 225.0,
+          "std": 0.0
+        },
+        "avg_degree": {
+          "mean": 3.066074074074074,
+          "std": 0.09712735406718995
+        },
+        "density": {
+          "mean": 0.013687830687830688,
+          "std": 0.0004336042592285266
+        },
+        "avg_clustering": {
+          "mean": 0.17874356261022928,
+          "std": 0.023532260433711812
+        },
+        "overall_avg_path_length": {
+          "mean": 9.814523809523811,
+          "std": 0.3583705940186223
+        },
+        "n_components": {
+          "mean": 3.4,
+          "std": 1.5187714333192688
+        },
+        "largest_comp_size": {
+          "mean": 220.93333333333334,
+          "std": 3.8291281282065013
+        },
+        "avg_preferred_degree": {
+          "mean": 1.498962962962963,
+          "std": 0.034252672039391835
+        },
+        "avg_beta_lever": {
+          "mean": 0.9989058543156131,
+          "std": 0.006105556359242868
+        },
+        "lcc_avg_degree": {
+          "mean": 3.1045783629737094,
+          "std": 0.08776366772106084
+        },
+        "lcc_avg_path_length": {
+          "mean": 9.844406945000998,
+          "std": 0.5685498264905969
+        },
+        "simple_box_dim_2d": {
+          "mean": 1.9142795396603949,
+          "std": 0.007390767938746263
+        }
+      },
+      "time_series": {
+        "avg_fcrit": {
+          "start": 10.6,
+          "final": 679.7586222222033,
+          "min": 10.6,
+          "max": 679.7586222222033,
+          "slope_per_step": 0.3347466844533283,
+          "final_std": 1.448563218795314
+        },
+        "avg_degree": {
+          "start": 0.8589629629629629,
+          "final": 3.066074074074074,
+          "min": 0.8589629629629629,
+          "max": 3.1265185185185187,
+          "slope_per_step": 0.0011041076093602355,
+          "final_std": 0.09712735406718995
+        },
+        "avg_clustering": {
+          "start": 0.002246913580246914,
+          "final": 0.17874356261022928,
+          "min": 0.002246913580246914,
+          "max": 0.1975566137566137,
+          "slope_per_step": 8.829247075036636e-05,
+          "final_std": 0.023532260433711816
+        },
+        "lcc_avg_path_length": {
+          "start": 2.488095238095238,
+          "final": 9.844406945000998,
+          "min": 2.488095238095238,
+          "max": 13.96893759702173,
+          "slope_per_step": 0.003679995851378569,
+          "final_std": 0.5685498264905968
+        },
+        "simple_box_dim_2d": {
+          "start": 0.8371043125113559,
+          "final": 1.9142795396603949,
+          "min": 0.8371043125113559,
+          "max": 1.9184272819521069,
+          "slope_per_step": 0.0005388570420955674,
+          "final_std": 0.007390767938746263
+        }
+      },
+      "final_distributions": {
+        "degree": {
+          "mean": 3.066074074074074,
+          "var": 1.7754860685871057,
+          "min": 0,
+          "max": 8
+        },
+        "comp_size": {
+          "n_components": 102,
+          "largest_comp_size": 225,
+          "mean": 66.17647058823529,
+          "var": 9985.929642445211,
+          "p_in_lcc": 0.981925925925926
+        }
+      },
+      "resource_schedule": {
+        "type": "periodic_shock",
+        "base_inflow": 180.0,
+        "reduced_inflow": 11.25,
+        "shock_duration": 50,
+        "shock_interval": 250
+      }
+    },
+    "flux": {
+      "final_iteration": {
+        "avg_fcrit": {
+          "mean": 1528.3723703703715,
+          "std": 2.751384362862828
+        },
+        "n_alive": {
+          "mean": 225.0,
+          "std": 0.0
+        },
+        "avg_degree": {
+          "mean": 2.4968888888888894,
+          "std": 0.1520727571157639
+        },
+        "density": {
+          "mean": 0.011146825396825398,
+          "std": 0.000678896237123946
+        },
+        "avg_clustering": {
+          "mean": 0.13553227513227512,
+          "std": 0.021939388558948242
+        },
+        "overall_avg_path_length": {
+          "mean": NaN,
+          "std": NaN
+        },
+        "n_components": {
+          "mean": 17.8,
+          "std": 4.798610910114162
+        },
+        "largest_comp_size": {
+          "mean": 186.16666666666666,
+          "std": 27.748973955005173
+        },
+        "avg_preferred_degree": {
+          "mean": 1.342962962962963,
+          "std": 0.10373808953730776
+        },
+        "avg_beta_lever": {
+          "mean": 0.9670488994941218,
+          "std": 0.028199402671961447
+        },
+        "lcc_avg_degree": {
+          "mean": 2.7202858572068256,
+          "std": 0.11480276737676658
+        },
+        "lcc_avg_path_length": {
+          "mean": 11.562069241030626,
+          "std": 1.8577790358631687
+        },
+        "simple_box_dim_2d": {
+          "mean": 1.8320776977364785,
+          "std": 0.08014166242109302
+        }
+      },
+      "time_series": {
+        "avg_fcrit": {
+          "start": 10.795555555555554,
+          "final": 1528.3723703703713,
+          "min": 10.795555555555554,
+          "max": 1528.3723703703713,
+          "slope_per_step": 0.7591679914031094,
+          "final_std": 2.751384362862828
+        },
+        "avg_degree": {
+          "start": 0.8586666666666666,
+          "final": 2.4968888888888894,
+          "min": 0.8586666666666666,
+          "max": 3.086814814814815,
+          "slope_per_step": 0.0008195208715468848,
+          "final_std": 0.1520727571157639
+        },
+        "avg_clustering": {
+          "start": 0.00488888888888889,
+          "final": 0.13553227513227512,
+          "min": 0.00488888888888889,
+          "max": 0.19244479717813048,
+          "slope_per_step": 6.535437030684653e-05,
+          "final_std": 0.021939388558948242
+        },
+        "lcc_avg_path_length": {
+          "start": 2.518198838198838,
+          "final": 11.562069241030628,
+          "min": 2.518198838198838,
+          "max": 13.517055851096295,
+          "slope_per_step": 0.004524197300065928,
+          "final_std": 1.8577790358631687
+        },
+        "simple_box_dim_2d": {
+          "start": 0.8773739115747314,
+          "final": 1.8320776977364785,
+          "min": 0.8773739115747314,
+          "max": 1.9166982737506304,
+          "slope_per_step": 0.0004775906884250861,
+          "final_std": 0.08014166242109302
+        }
+      },
+      "final_distributions": {
+        "degree": {
+          "mean": 2.496888888888889,
+          "var": 1.899471802469136,
+          "min": 0,
+          "max": 8
+        },
+        "comp_size": {
+          "n_components": 534,
+          "largest_comp_size": 217,
+          "mean": 12.640449438202246,
+          "var": 1872.4849556032486,
+          "p_in_lcc": 0.8274074074074074
+        }
+      },
+      "resource_schedule": {
+        "type": "moving_sources",
+        "base_inflow": 180.0,
+        "n_sources": 5,
+        "source_lifespan": 75
+      }
+    }
+  }
+}

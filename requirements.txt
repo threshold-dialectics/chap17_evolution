@@ -1,0 +1,8 @@
+# Numerical computing
+numpy>=1.23
+
+# Graph analysis
+networkx>=3.0
+
+# Plotting
+matplotlib>=3.6
