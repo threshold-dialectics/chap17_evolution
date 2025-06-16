@@ -513,7 +513,9 @@ def run_simulation_regime(
             env.plot_network(ax_network, title=f"{regime_type.upper()} - Step {step}")
             
             snapshot_filename = f"mvs_network_{regime_type}{run_tag}_step_{step}.png"
-            fig_network_snapshot.savefig(os.path.join(RESULTS_DIR, snapshot_filename))
+            fig_network_snapshot.savefig(
+                os.path.join(RESULTS_DIR, snapshot_filename), dpi=350
+            )
             # print(f"Saved network snapshot: {snapshot_filename}") # Optional: log this too
 
     if save_network_snapshots and fig_network_snapshot is not None:
@@ -591,55 +593,71 @@ if __name__ == "__main__":
             print(f"No run histories for {regime}, skipping metrics plot.")
             continue
         
-        steps = run_histories[0]["step"] # Assumes all runs have the same number of steps
-        num_plots = len(plot_keys)
-        
-        fig_metrics, axes_metrics = plt.subplots(num_plots, 1, figsize=(12, 2.5 * num_plots), sharex=True)
-        if num_plots == 1: axes_metrics = [axes_metrics] # Ensure it's a list
+        steps = run_histories[0]["step"]  # Assumes all runs have the same number of steps
+        groups = [plot_keys[:4], plot_keys[4:]]
 
-        for idx, key in enumerate(plot_keys):
-            # Collect data, handling cases where a key might be missing or data is empty
-            data_for_key = [h[key] for h in run_histories if key in h and h[key]]
-            if not data_for_key:
-                print(f"Warning: No data for metric '{key}' in regime '{regime}'. Plotting placeholder.")
-                axes_metrics[idx].text(0.5, 0.5, f"No data for {key}", horizontalalignment='center', verticalalignment='center', transform=axes_metrics[idx].transAxes)
+        for part_idx, key_group in enumerate(groups, start=1):
+            num_plots = len(key_group)
+            fig_metrics, axes_metrics = plt.subplots(
+                num_plots, 1, figsize=(12, 2.5 * num_plots), sharex=True
+            )
+            if num_plots == 1:
+                axes_metrics = [axes_metrics]
+
+            for idx, key in enumerate(key_group):
+                # Collect data, handling cases where a key might be missing or data is empty
+                data_for_key = [h[key] for h in run_histories if key in h and h[key]]
+                if not data_for_key:
+                    print(
+                        f"Warning: No data for metric '{key}' in regime '{regime}'. Plotting placeholder."
+                    )
+                    axes_metrics[idx].text(
+                        0.5,
+                        0.5,
+                        f"No data for {key}",
+                        horizontalalignment="center",
+                        verticalalignment="center",
+                        transform=axes_metrics[idx].transAxes,
+                    )
+                    axes_metrics[idx].set_ylabel(key.replace("_", " ").title())
+                    axes_metrics[idx].grid(True, linestyle="--", alpha=0.7)
+                    continue
+
+                # Ensure all data arrays for this key have the same length as 'steps'
+                max_len = len(steps)
+                processed_data = []
+                for arr in data_for_key:
+                    if len(arr) < max_len:
+                        pad_value = arr[-1] if arr else np.nan
+                        processed_data.append(
+                            np.pad(arr, (0, max_len - len(arr)), "constant", constant_values=pad_value)
+                        )
+                    elif len(arr) > max_len:
+                        processed_data.append(arr[:max_len])
+                    else:
+                        processed_data.append(arr)
+
+                data_np = np.array(processed_data)
+                mean = np.nanmean(data_np, axis=0)
+                std = np.nanstd(data_np, axis=0)
+
+                axes_metrics[idx].plot(steps, mean, label=key)
+                axes_metrics[idx].fill_between(steps, mean - std, mean + std, alpha=0.2)
                 axes_metrics[idx].set_ylabel(key.replace("_", " ").title())
                 axes_metrics[idx].grid(True, linestyle="--", alpha=0.7)
-                continue
+                axes_metrics[idx].legend()
 
-            # Ensure all data arrays for this key have the same length as 'steps' for proper aggregation
-            # This typically means padding if some runs ended prematurely or had varying step counts (shouldn't happen here)
-            max_len = len(steps)
-            processed_data = []
-            for arr in data_for_key:
-                if len(arr) < max_len:
-                    # Pad with the last valid value or NaN
-                    pad_value = arr[-1] if arr else np.nan
-                    processed_data.append(np.pad(arr, (0, max_len - len(arr)), 'constant', constant_values=pad_value))
-                elif len(arr) > max_len:
-                    processed_data.append(arr[:max_len]) # Truncate if too long
-                else:
-                    processed_data.append(arr)
-            
-            data_np = np.array(processed_data)
-            mean = np.nanmean(data_np, axis=0)
-            std = np.nanstd(data_np, axis=0)
-
-            axes_metrics[idx].plot(steps, mean, label=key)
-            axes_metrics[idx].fill_between(steps, mean - std, mean + std, alpha=0.2)
-            axes_metrics[idx].set_ylabel(key.replace("_", " ").title())
-            axes_metrics[idx].grid(True, linestyle="--", alpha=0.7)
-            axes_metrics[idx].legend()
-
-        axes_metrics[-1].set_xlabel("Simulation Step")
-        fig_metrics.suptitle(
-            f"Averaged Network Metrics Evolution - {regime.upper()} Regime (N={N_ITERATIONS_PER_REGIME} runs)"
-        )
-        plt.tight_layout(rect=[0, 0, 1, 0.96]) # Adjust layout to make space for suptitle
-        metrics_plot_filename = f"mvs_metrics_{regime}.png"
-        fig_metrics.savefig(os.path.join(RESULTS_DIR, metrics_plot_filename))
-        plt.close(fig_metrics) # Close the figure to free memory
-        print(f"Saved averaged metrics plot: {metrics_plot_filename}")
+            axes_metrics[-1].set_xlabel("Simulation Step")
+            fig_metrics.suptitle(
+                f"Averaged Network Metrics Evolution (Part {part_idx}) - {regime.upper()} Regime (N={N_ITERATIONS_PER_REGIME} runs)"
+            )
+            plt.tight_layout(rect=[0, 0, 1, 0.96])
+            metrics_plot_filename = f"mvs_metrics_{regime}_part{part_idx}.png"
+            fig_metrics.savefig(
+                os.path.join(RESULTS_DIR, metrics_plot_filename), dpi=350
+            )
+            plt.close(fig_metrics)
+            print(f"Saved averaged metrics plot: {metrics_plot_filename}")
 
 
         # ----- Aggregated distributions -----
@@ -658,7 +676,9 @@ if __name__ == "__main__":
                 f"Aggregated Component Size Distribution - {regime.upper()} (N={N_ITERATIONS_PER_REGIME} runs)"
             )
             comp_dist_filename = f"mvs_component_size_dist_{regime}.png"
-            fig_comp.savefig(os.path.join(RESULTS_DIR, comp_dist_filename))
+            fig_comp.savefig(
+                os.path.join(RESULTS_DIR, comp_dist_filename), dpi=350
+            )
             plt.close(fig_comp) # Close the figure
             print(f"Saved component size distribution: {comp_dist_filename}")
         else:
@@ -679,7 +699,9 @@ if __name__ == "__main__":
                 f"Aggregated Degree Distribution - {regime.upper()} (N={N_ITERATIONS_PER_REGIME} runs)"
             )
             deg_dist_filename = f"mvs_degree_dist_{regime}.png"
-            fig_deg.savefig(os.path.join(RESULTS_DIR, deg_dist_filename))
+            fig_deg.savefig(
+                os.path.join(RESULTS_DIR, deg_dist_filename), dpi=350
+            )
             plt.close(fig_deg) # Close the figure
             print(f"Saved degree distribution: {deg_dist_filename}")
         else:

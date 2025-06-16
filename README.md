@@ -88,8 +88,9 @@ The script will create a "results/" directory containing the following outputs f
 1.  **Final Network Snapshots:** A PNG image showing the final evolved network topology for the first replicate of each regime.
     *   "mvs_network_{regime}_run0_step_1999.png"
 
-2.  **Averaged Metrics Evolution:** A plot showing the mean and standard deviation of key network metrics over the 2000 simulation steps, averaged across all 30 replicates.
-    *   "mvs_metrics_{regime}.png"
+2.  **Averaged Metrics Evolution:** Two plots showing the mean and standard deviation of key network metrics over the 2000 simulation steps, averaged across all 30 replicates. Each plot contains four metrics for better readability.
+    *   "mvs_metrics_{regime}_part1.png"
+    *   "mvs_metrics_{regime}_part2.png"
 
 3.  **Final Distributions:** Plots showing the aggregated distributions of node degree and component size at the end of all simulation runs for a regime.
     *   "mvs_degree_dist_{regime}.png"
